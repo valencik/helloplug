@@ -11,13 +11,8 @@ defmodule Router do
   end
 end
 
-defmodule Helloplug do
+defmodule UserRouter do
   use Router
-  def route("GET", ["hello"], conn) do
-    # this route is for /hello
-    conn |> Plug.Conn.send_resp(200, "Hello World")
-  end
-
   def route("GET", ["users", user_id], conn) do
     # this route is for /users/<user_id>
     conn |> Plug.Conn.send_resp(200, "You requested user #{user_id}")
@@ -25,7 +20,23 @@ defmodule Helloplug do
 
   def route(_method, _path, conn) do
     # this route is called if no other routes match
+    conn |> Plug.Conn.send_resp(404, "Couldn't find that user page, sorry!")
+  end
+end
+
+defmodule WebsiteRouter do
+  use Router
+
+  @user_router_options UserRouter.init([])
+  def route("GET", ["users" | path], conn) do
+    UserRouter.call(conn, @user_router_options)
+  end
+  def route("GET", ["hello"], conn) do
+    # this route is for /hello
+    conn |> Plug.Conn.send_resp(200, "This is the Hello World page!")
+  end
+  def route(_method, _path, conn) do
+    # this route is called if no other routes match
     conn |> Plug.Conn.send_resp(404, "Couldn't find that page, sorry!")
   end
-
 end

@@ -13,9 +13,12 @@ end
 
 defmodule UserRouter do
   use Router
+  require EEx # you have to require EEx before using its macros outside of functions
+  EEx.function_from_file :defp, :template_show_user, "templates/show_user.eex", [:user_id]
+
   def route("GET", ["users", user_id], conn) do
     # this route is for /users/<user_id>
-    page_contents = EEx.eval_file("templates/show_user.eex", [user_id: user_id])
+    page_contents = template_show_user(user_id)
     conn |> Plug.Conn.put_resp_content_type("text/html") |> Plug.Conn.send_resp(200, page_contents)
   end
 

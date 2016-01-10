@@ -11,6 +11,7 @@ defmodule User do
     # id field is implicit
     field :first_name, :string
     field :last_name, :string
+    timestamps
   end
 end
 
